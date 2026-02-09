@@ -1,0 +1,12 @@
+[Unit]
+Description=DOCX to PNG Converter Web Service
+After=network.target
+
+[Service]
+User=root
+WorkingDirectory=/root/docx2png
+ExecStart=/root/docx2png/run.sh
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

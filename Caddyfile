@@ -1,0 +1,14 @@
+{
+    # Optional: Disable auto-redirect if port 80 is strictly taken by FreshRSS and we can't bind it.
+    # However, for Caddy to manage certificates via HTTP challenge, it needs port 80.
+    # If FreshRSS is on port 80, Caddy setup might fail unless we use DNS challenge or FreshRSS is behind Caddy.
+    # For this setup, we assume Caddy takes over ingress.
+}
+
+docx2png.shoggothstaring.com {
+    reverse_proxy localhost:8000
+}
+
+rss.shoggothstaring.com {
+    reverse_proxy localhost:80
+}
