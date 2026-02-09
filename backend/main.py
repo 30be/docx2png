@@ -27,11 +27,15 @@ def cleanup_temp_dir(temp_dir: Path):
         shutil.rmtree(temp_dir)
 
 @app.post("/convert")
-async def convert_docx_to_png(background_tasks: BackgroundTasks, file: UploadFile = File(...)):
+def convert_docx_to_png(background_tasks: BackgroundTasks, file: UploadFile = File(...)):
     # Create a unique temp directory
     request_id = str(uuid.uuid4())
     temp_dir = Path(f"/tmp/docx2png_{request_id}")
     temp_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Unique LibreOffice profile to allow parallel instances
+    lo_profile = temp_dir / "lo_profile"
+    lo_profile.mkdir()
 
     try:
         # Save uploaded file
@@ -40,8 +44,10 @@ async def convert_docx_to_png(background_tasks: BackgroundTasks, file: UploadFil
             shutil.copyfileobj(file.file, buffer)
 
         # Convert DOCX to PDF
+        # Use -env:UserInstallation to avoid "User profile is locked" during parallel execution
         cmd_libreoffice = [
             "libreoffice",
+            f"-env:UserInstallation=file://{lo_profile}",
             "--headless",
             "--convert-to",
             "pdf",
@@ -59,8 +65,6 @@ async def convert_docx_to_png(background_tasks: BackgroundTasks, file: UploadFil
         pdf_path = temp_dir / pdf_filename
         
         if not pdf_path.exists():
-             # LibreOffice might have renamed it differently if filename had spaces or weird chars
-             # Check for any PDF in the directory
              pdfs = list(temp_dir.glob("*.pdf"))
              if len(pdfs) == 1:
                  pdf_path = pdfs[0]
