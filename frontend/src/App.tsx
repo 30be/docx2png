@@ -1,7 +1,4 @@
 import { useState, useRef } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Loader2, Download, AlertCircle } from "lucide-react"
 
 function App() {
@@ -52,25 +49,26 @@ function App() {
 
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-      <Card className="w-[400px]">
-        <CardHeader>
-          <CardTitle>DOCX to PNG Converter</CardTitle>
-          <CardDescription>Upload a DOCX file to convert it to PNG images.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
+      <div className="w-[400px] rounded-lg border bg-white text-slate-950 shadow-sm">
+        <div className="flex flex-col space-y-1.5 p-6">
+          <h3 className="text-2xl font-semibold leading-none tracking-tight">DOCX to PNG Converter</h3>
+          <p className="text-sm text-slate-500">Upload a DOCX file to convert it to PNG images.</p>
+        </div>
+        <div className="p-6 pt-0 space-y-4">
           <div className="grid w-full max-w-sm items-center gap-1.5">
-            <Input
+            <input
               ref={fileInputRef}
               id="docx-file"
               type="file"
               accept=".docx"
               onChange={handleFileChange}
               disabled={loading}
+              className="flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             />
           </div>
 
           {error && (
-            <div className="bg-destructive/10 text-destructive text-sm p-3 rounded-md flex items-center gap-2">
+            <div className="bg-red-50 text-red-900 text-sm p-3 rounded-md flex items-center gap-2">
               <AlertCircle className="h-4 w-4" />
               <span>{error}</span>
             </div>
@@ -82,29 +80,39 @@ function App() {
               <span>Conversion complete!</span>
             </div>
           )}
-        </CardContent>
-        <CardFooter className="flex justify-between">
-          <Button variant="outline" onClick={() => {
-            setFile(null)
-            setDownloadUrl(null)
-            setError(null)
-            if (fileInputRef.current) fileInputRef.current.value = ""
-          }} disabled={loading || (!file && !downloadUrl)}>
+        </div>
+        <div className="flex items-center p-6 pt-0 justify-between">
+          <button
+            onClick={() => {
+              setFile(null)
+              setDownloadUrl(null)
+              setError(null)
+              if (fileInputRef.current) fileInputRef.current.value = ""
+            }}
+            disabled={loading || (!file && !downloadUrl)}
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-slate-200 bg-white hover:bg-slate-100 hover:text-slate-900 h-10 px-4 py-2"
+          >
             Clear
-          </Button>
+          </button>
           
           {downloadUrl ? (
             <a href={downloadUrl} download={`${file?.name.replace(".docx", "")}_images.zip`}>
-              <Button>Download ZIP</Button>
+              <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-slate-900 text-slate-50 hover:bg-slate-900/90 h-10 px-4 py-2">
+                Download ZIP
+              </button>
             </a>
           ) : (
-            <Button onClick={handleConvert} disabled={!file || loading}>
+            <button
+              onClick={handleConvert}
+              disabled={!file || loading}
+              className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-slate-900 text-slate-50 hover:bg-slate-900/90 h-10 px-4 py-2"
+            >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {loading ? "Converting..." : "Convert"}
-            </Button>
+            </button>
           )}
-        </CardFooter>
-      </Card>
+        </div>
+      </div>
     </div>
   )
 }
